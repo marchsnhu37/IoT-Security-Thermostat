@@ -10,11 +10,9 @@ In this particular assignment and in the ones preceding it, we were tasked with 
 
   I selected this artifact because, not only is it particularly recent in my degree program,  
 but it’s also been one of the most challenging. I struggled with the hardware, but I believe that  
-made me grow as a programmer. By building a C framework from scratch rather than relying on the original script’s library in Python, I’m demonstrating an ability to improve flawed programming  
-in hardware and an ability to build on it. By designing and evaluating computing solutions, I’m  
+made me grow as a programmer. By building a C framework from scratch rather than relying on the original script’s library in Python, I’m demonstrating an ability to improve flawed programming in hardware and an ability to build on it. By designing and evaluating computing solutions, I’m  
 proving able to remediate the glaring problems that already exist in the prototype, like delayed  
-or missing inputs and memory issues by mitigating the latency through asynchronous state loops. By translating the entire script from Python to C, I also demonstrate an ability to select and   
-deploy new tools while using problem-solving skills to navigate complicated hardware issues. 
+or missing inputs and memory issues by mitigating the latency through asynchronous state loops. By translating the entire script from Python to C, I also demonstrate an ability to select and deploy new tools while using problem-solving skills to navigate complicated hardware issues. 
 
   Even though currently the artifact has some hardware mockups, I believe it is meeting my goals,  
 particularly through its forecasted conservation of resources.  
