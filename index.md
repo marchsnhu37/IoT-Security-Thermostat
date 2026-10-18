@@ -17,7 +17,6 @@ But much of software development is done alone. My work in this portfolio and be
 
 In this portfolio, I undertook continually developing a thermostat prototype on specialized hardware. With a singular artifact, I not only demonstrated an ability to translate a program between languages, but I also demonstrated an ability to improve preexisting software by way of implementing a logging system and by building a data pipeline to reduce the risk of data corruption.
 
-[Read my Professional Self-Assessment](./self_assessment)
 
 ## Shortcuts:
 * [Check out my code review video, where I highlight potential improvements for the original file(s)](https://drive.google.com/file/d/1y39Weup3MIUgpdqUqYZTw57B430xY1Lr/view?usp=sharing)
