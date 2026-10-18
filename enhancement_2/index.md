@@ -5,7 +5,7 @@ title: Enhancement 2
 
 # Enhancement 2: Algorithms and Data Structure
 
-[View pipeline.c](./pipeline.c)
+[View pipeline.c](https://github.com/marchsnhu37/ePortfolio/blob/main/ThermostatProject/pipeline.c)
 
 [View pipeline.h](./pipeline.h)
 
