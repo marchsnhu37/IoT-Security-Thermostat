@@ -7,7 +7,7 @@ title: Enhancement 2
 
 [View pipeline.c](https://github.com/marchsnhu37/ePortfolio/blob/main/ThermostatProject/pipeline.c)
 
-[View pipeline.h](./pipeline.h)
+[View pipeline.h](https://github.com/marchsnhu37/ePortfolio/blob/main/ThermostatProject/pipeline.h)
 
 [Back to Homepage](../)
 
