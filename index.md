@@ -7,6 +7,13 @@ title: Home
 
 I'm currently developing a **thermostat** on my **Raspberry Pi**, translating from one monolithic **Python** file into **C**.
 
+## My Professional Self-Assessment
+
+Hi, I'm Martina. I'm about to graduate with a B.S. in Computer Science.
+
+Navigating this degree program has left me with skills both new and to be honed. My learned experience
+in undertakings like app and even full-stack development has
+
 [Read my Professional Self-Assessment](./self_assessment)
 
 ## Shortcuts:
