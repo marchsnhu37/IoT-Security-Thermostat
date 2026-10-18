@@ -31,8 +31,10 @@ and will include state, current temp in Fahrenheit, and current set temp
 #include <string.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <gpiod.h>
 #include "pipeline.h"
-include "database.h"
+#include "database.h"
+#include "sensor.h"
 
 //make a macro for debugging
 #define DEBUG true
@@ -48,6 +50,10 @@ typedef enum {
 //configuring LEDs on the Pi
 #define PIN_LED_BLUE 23
 #define PIN_LED_RED 18
+//buttons
+#define PIN_BTN_STATE 22
+#define PIN_BTN_INC 24
+#define PIN_BTN_DEC 25
 
 //global tracking variables
 int set_point = 72; //default target temp
@@ -69,10 +75,19 @@ circular_buffer_t telemetry_buffer = {
 volatile bool repeat = true; //for main loop. stops when user hits CTRL-C
 volatile bool end_display = false; //decides whether the background LCD thread will run
 
+//native linux hardware pointers
+static struct gpiod_chip *gpio_chip = NULL;
+static struct gpiod_chip *line_led_blue = NULL;
+static struct gpiod_chip *line_led_red = NULL;
+static struct gpiod_chip *line_btn_state = NULL;
+static struct gpiod_chip *line_btn_inc = NULL;
+static struct gpiod_chip *line_btn_dec = NULL;
+
 //forward declarations
 float get_fahrenheit(void);
 void update_lights(void);
 void setup_serial_output(char *output_buffer, size_t buffer_size);
+void force_database_log(void);
 
 //mock updates specific to hardware
 void update_screen(const char* line1, const char* line2){
@@ -80,6 +95,18 @@ void update_screen(const char* line1, const char* line2){
         printf("\r[LCD] %s - %s  ", line1, line2);
         fflush(stdout); //console forced to redraw the line
     }
+}
+
+//gathers active variables, forces write to SQLite DB
+void force_database_log(void){
+    pthread_mutex_lock(&state_mutex);
+    thermostat_data_t snap_packet;
+    snap_packet.timestamp=time(NULL);
+    snap_packet.filtered_temp=current_smoothed_temperature;
+    snap_packet.system_state=(current_state==STATE_HEAT) ? 1 : (current_state == STATE_COOL) ? 2 : 0;
+    pthread_mutex_unlock(&state_mutex);
+
+    log_telemetry_packet(&snap_packet);
 }
 
 //when user presses the green button, the function will change the thermostat's state
@@ -106,6 +133,7 @@ void cycle_thermostate_state(void){
     }
     pthread_mutex_unlock(&state_mutex); //unlocks thread channel
     update_lights();
+    force_database_log();
 }
 
 //callbacks. run when you press one of the three buttons
@@ -135,8 +163,8 @@ void process_temp_dec_button(void){
 
 //calculates temp in Fahrenheit
 float get_fahrenheit(void){
-    float celsius = 22.2; //currently a simulated sensor value. have yet to load external hardware drivers
-    return ((9.0/5.0) * celsius) + 32.0;
+    //71.5 is safe fallback if offline
+    return read_hardware_sensor(71.5f);
 }
 
 //reads temp, evlauates state, and updates LEDs
@@ -151,33 +179,41 @@ void update_lights(void){
     }
 
     if (current_state == STATE_HEAT){ //heat state
-        if (temp < set_point){
+        if (temp < target){
             if (DEBUG){
                 printf("Red LED pulsing\n");
             }
+            system("python3 -c 'from gpiozero import PWMLED; PWMLED(18).pulse()' &"); //red pulses
         }
         else{
             if (DEBUG){
                 printf("Red LED solid\n");
             }
+            system("python3 -c 'from gpiozero import LED; PWMLED(18).on()'");
         }
+        system("python3 -c 'from gpiozero import LED; PWMLED(23).off()'"); //keeps blue off
     }
     else if (current_state == STATE_COOL){ //cool state
-        if (temp > set_point){
+        if (temp > target){
             if (DEBUG){
                 printf("Blue LED pulsing\n");
             }
+            system("python3 -c 'from gpiozero import PWMLED; PWMLED(23).pulse()' &"); //blue pulses
         }
         else{
             if (DEBUG){
                 printf("Blue LED solid\n");
             }
+            system("python3 -c 'from gpiozero import LED; PWMLED(23).on()'");
         }
+        system("python3 -c 'from gpiozero import LED; PWMLED(18).off()'"); //keeps blue off
     }
     else{ //off state
         if (DEBUG){
             printf("All LEDS off\n");
         }
+        system("python3 -c 'from gpiozero import LED; PWMLED(18).off()'"); //keeps blue off
+        system("python3 -c 'from gpiozero import LED; PWMLED(23).off()'"); //keeps red off
     }
 }
 
@@ -215,10 +251,10 @@ void* manage_my_display(void* arg){
     int counter = 1; //waits 30 seconds to send telemetry data
     int altCounter = 1; //for the LCD display screen to switch what's visible on line 2
     //memory buffers to store text strings
-    char lcd_line_1[32]; 
-    char lcd_line_2[32];
-    char serial_buffer[64];
-    char mock_async_stream[MAX_INPUT_LINE]; //allocates buffer for network streaming
+    char lcd_line_1[64] = {0}; 
+    char lcd_line_2[64] = {0};
+    char serial_buffer[64] = {0};
+    char mock_async_stream[MAX_INPUT_LINE] = {0}; //allocates buffer for network streaming
 
     while (!end_display){
         if (DEBUG){ 
@@ -237,13 +273,13 @@ void* manage_my_display(void* arg){
         pthread_mutex_unlock(&state_mutex);
 
         //makes one string of raw data
-        snprintf(mock_async_stream, sizeof(mock_async_stream), "%s,%.1f,%d\n", current_mode_str, fluctuating_sensor, current_target);
+        snprintf(mock_async_stream, sizeof(mock_async_stream), "%s,%.1f,%d\n", current_mode_str, shifting_sensor, current_target);
 
         //prepares to hold final numbers
         thermostat_data_t fresh_packet;
 
         //from pipeline.c. parses string
-        if (parse_telemetry-stream(mock_async_stream, sizeof(mock_async_stream), &fresh_packet)){
+        if (parse_telemetry_stream(mock_async_stream, sizeof(mock_async_stream), &fresh_packet)){
 
             pthread_mutex_lock(&state_mutex);
             //pushes decoded into buffer array. checks max buffer
