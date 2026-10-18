@@ -9,4 +9,4 @@ I'm currently developing a **thermostat** on my **Raspberry Pi**, translating fr
 
 ## Shortcuts:
 * [View the Thermostat files, including the original and the updated C files](./ThermostatProject/)
-* [View the project README](./README.md)
+* [View the project README](https://github.com/marchsnhu37/ePortfolio/blob/main/README.md)
