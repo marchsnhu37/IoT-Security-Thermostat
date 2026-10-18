@@ -6,8 +6,7 @@ title: Enhancement 1
 # Enhancement 1: Software and Design
 
   The CS 350 prototypical thermostat comes about from Module 7 of that course.  
-In this particular assignment and in the ones preceding it, we were tasked with setting up Raspberry Pi hardware and programming LEDs on the board to correspond with temperatures that could be changed via pressing buttons attached to the board. I plan to take the original file that made the thermostat functionality of the Raspberry Pi and translate into a C application that carries  
-the same functionalities as the original as a baseline while also eliminating some of the originally inherent issues like those involving resource optimization. 
+In this particular assignment and in the ones preceding it, we were tasked with setting up Raspberry Pi hardware and programming LEDs on the board to correspond with temperatures that could be changed via pressing buttons attached to the board. I plan to take the original file that made the thermostat functionality of the Raspberry Pi and translate into a C application that carries the same functionalities as the original as a baseline while also eliminating some of the originally inherent issues like those involving resource optimization. 
 
   I selected this artifact because, not only is it particularly recent in my degree program,  
 but it’s also been one of the most challenging. I struggled with the hardware, but I believe that  
