@@ -8,5 +8,5 @@ title: Home
 I'm currently developing a **thermostat** on my **Raspberry Pi**, translating from one monolithic **Python** file into **C**.
 
 ## Shortcuts:
-* [View the Thermostat files, including the original and the updated C files](./ThermostatProject/)
+* [View the Thermostat files, including the original and the updated C files](https://github.com/marchsnhu37/ePortfolio/tree/main/ThermostatProject)
 * [View the project README](https://github.com/marchsnhu37/ePortfolio/blob/main/README.md)
